@@ -11,6 +11,7 @@
 <itunes:category text="Business"/>
 <itunes:image href="https://azschool.github.io/podcast-site/cover.jpg"/>
 <atom:link href="https://azschool.github.io/podcast-site/feed.xml" rel="self" type="application/rss+xml"/>
+<itunes:owner><itunes:name>Rabi Jay</itunes:name><itunes:email>rabijay1@yahoo.com</itunes:email></itunes:owner>
 <item>
 <title>The first deliverable that decides for you</title>
 <description>Dave switched on his first agent last night and it sent eleven emails before he went to bed. Rabi starts with the thirty seconds every owner says at the door when they leave someone in charge, and why nobody is saying it to AI agents. What AEBOK is, in plain words. Why an AI agent is the first tool a business has bought that takes over part of the deciding. And the rule for the series: nothing gets switched on without its line.
@@ -21,7 +22,7 @@ Owners&#x27; group: https://chat.whatsapp.com/HeLeFUhqdbYKYxou4n723i
 Planned and drafted with Anthropic Claude, extensively edited. Rabi&#x27;s voice is his authorised synthetic voice. Dave is an invented character voiced by AI. Shop and Save is a fictional business.</description>
 <enclosure url="https://azschool.github.io/podcast-site/episodes/Ep01_Studio_Script.mp3" length="7908141" type="audio/mpeg"/>
 <guid isPermaLink="false">https://azschool.github.io/podcast-site/episodes/Ep01_Studio_Script.mp3</guid>
-<pubDate>Mon, 02 Nov 2026 04:57:38 +0000</pubDate>
+<pubDate>Mon, 02 Nov 2026 05:05:14 +0000</pubDate>
 <itunes:duration>494</itunes:duration>
 <itunes:episode>1</itunes:episode>
 <itunes:explicit>false</itunes:explicit>

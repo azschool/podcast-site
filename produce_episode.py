@@ -184,7 +184,7 @@ SHOW = {
     "title": "Running Your AI Agents: AEBOK Explained",
     "link": "https://autonomousenterpriseai.com",
     "author": "Rabi Jay",
-    "email": "",
+    "email": "rabijay1@yahoo.com",
     "description": ("AI agents can now answer your customers, post for you, chase invoices and prepare your books. "
                     "The question is not whether they can do the work. It is what they are allowed to do, who approves it, "
                     "and who answers when it goes wrong. Rabi Jay, author of three books on enterprise AI and founder of AEBOK, "
