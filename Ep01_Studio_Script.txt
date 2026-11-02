@@ -1,79 +1,79 @@
-Dave: So I did it. I switched one on last night.
+Dave: [quietly] So I did it. I switched one on last night.
 
-Rabi: Switched what on?
+Rabi: [curious] Switched what on?
 
-Dave: The email one. The agent. It is meant to welcome every new seller who signs up on Shop and Save, send them the setup guide, and nudge the ones who have not listed anything after three days. It sent eleven emails before I went to bed.
+Dave: The email one. The agent. It is meant to welcome every new seller who signs up on Shop and Save, send them the setup guide, and nudge the ones who have not listed anything after three days. <break time="0.6s"/> It sent eleven emails before I went to bed.
 
-Rabi: And how did you feel about that?
+Rabi: [warmly] And how did you feel about that?
 
-Dave: Honestly? I checked my phone at two in the morning to see what it had said to people.
+Dave: [sheepish] Honestly? I checked my phone at two in the morning to see what it had said to people.
 
-Rabi: Good. That is exactly where I want to start, because that feeling, the two in the morning feeling, is the whole reason this series exists. And before we go any further I should say who you are, because people listening will wonder. Dave is not a real person. He is a voice I made up. Shop and Save is an idea I had years ago, a marketplace where a freelancer, a corner shop, a school, a church, anyone, could put up a page and sell. It never got built. So in this series Dave runs it, he is switching on AI agents one at a time, and he asks me the questions I think a real owner would ask. The agents are real. The mistakes will be real. He is the one invented thing, and I will say that every episode.
+Rabi: [warmly] Good. That is exactly where I want to start, because that feeling, the two in the morning feeling, is the whole reason this series exists. <break time="0.8s"/> And before we go any further I should say who you are, because people listening will wonder. Dave is not a real person. He is a voice I made up. Shop and Save is an idea I had years ago, a marketplace where a freelancer, a corner shop, a school, a church, anyone, could put up a page and sell. It never got built. <break time="0.6s"/> So in this series Dave runs it, he is switching on AI agents one at a time, and he asks me the questions I think a real owner would ask. The agents are real. The mistakes will be real. He is the one invented thing, and I will say that every episode.
 
-Dave: Fine. I am invented. Can we get back to my eleven emails?
+Dave: [dry] Fine. I am invented. Can we get back to my eleven emails?
 
-Rabi: Let me come at it sideways. Think about the first time you left somebody else in charge of anything. A shop, a clinic, a market stall, a youth group. You are walking out the door and the new person is behind the counter, and you turn round and say three things. Refunds up to fifty. If anyone asks for a discount, call me. Leave the supplier orders, I will do those tonight.
+Rabi: [thoughtful] Let me come at it sideways. Think about the first time you left somebody else in charge of anything. A shop, a clinic, a market stall, a youth group. You are walking out the door and the new person is behind the counter, and you turn round and say three things. <break time="0.5s"/> Refunds up to fifty. <break time="0.4s"/> If anyone asks for a discount, call me. <break time="0.4s"/> Leave the supplier orders, I will do those tonight.
 
-Dave: My dad used to say exactly that. Different numbers.
+Dave: [chuckles] My dad used to say exactly that. Different numbers.
 
-Rabi: Everybody's dad said it. Nobody taught them to. Before you let a person decide things in your name, you tell them what they can decide, what they check with you, and what they must leave alone. It takes thirty seconds and it is the most important thing you say to them all week. Now, Dave. Did your agent get the thirty seconds?
+Rabi: [warmly] Everybody's dad said it. Nobody taught them to. Before you let a person decide things in your name, you tell them what they can decide, what they check with you, and what they must leave alone. It takes thirty seconds and it is the most important thing you say to them all week. <break time="0.8s"/> Now, Dave. Did your agent get the thirty seconds?
 
-Dave: It got a prompt. A long one.
+Dave: [hesitant] It got a prompt. A long one.
 
 Rabi: That is not the same thing, and I think you know that, because you were up at two.
 
-Dave: So what is AEBOK, then? Because you keep saying the word and I have not asked.
+Dave: [curious] So what is AEBOK, then? Because you keep saying the word and I have not asked.
 
-Rabi: AEBOK is the Autonomous Enterprise Body of Knowledge. Plain words: it is a set of methods for one job. Deciding what an AI agent may do, under whose authority, and on what evidence. It is not a tool. It is not a course from a vendor. It is not a way to build agents. There are plenty of people teaching that, some of them very well. This is the thirty seconds at the door, written down properly, for a thing that is not a person.
+Rabi: [thoughtful] AEBOK is the Autonomous Enterprise Body of Knowledge. Plain words: it is a set of methods for one job. Deciding what an AI agent may do, under whose authority, and on what evidence. <break time="0.6s"/> It is not a tool. It is not a course from a vendor. It is not a way to build agents. There are plenty of people teaching that, some of them very well. This is the thirty seconds at the door, written down properly, for a thing that is not a person.
 
 Dave: Why does it need its own set of methods? Isn't that just good management?
 
-Rabi: It is good management. But think about every tool a business has ever bought. A till. A website. A spreadsheet. A booking system. Every one of them gave you a new tool, and you kept making the decisions. An AI agent is the first tool you have ever bought that takes over part of the deciding. It approves the refund. It picks who gets the email. It sends the quote. Nobody has written the thirty seconds for that, and the people who wrote the big-company version, which is where AEBOK started, were looking at four thousand staff and a regulator. The question turns out to be the same for a marketplace run by one person at a kitchen table.
+Rabi: It is good management. But think about every tool a business has ever bought. A till. A website. A spreadsheet. A booking system. Every one of them gave you a new tool, and you kept making the decisions. <break time="0.6s"/> An AI agent is the first tool you have ever bought that takes over part of the deciding. It approves the refund. It picks who gets the email. It sends the quote. Nobody has written the thirty seconds for that, and the people who wrote the big-company version, which is where AEBOK started, were looking at four thousand staff and a regulator. The question turns out to be the same for a marketplace run by one person at a kitchen table.
 
-Dave: You keep saying big company and small business like they are the same.
+Dave: [skeptical] You keep saying big company and small business like they are the same.
 
-Rabi: They are the same question with different numbers. There is a line we use, and I will quote it exactly. When a project closes, the organisation has a new tool. When an AI transformation closes, the organisation has a new decision-maker, and someone accountable for everything it decides. Swap organisation for Shop and Save, or for you, and it still holds. So every episode I will give you both versions. The business of one, which is you, and the business of thousands, which is a company I will call Apex, and it will usually turn out that Apex has the same problem with more people in the meeting.
+Rabi: They are the same question with different numbers. There is a line we use, and I will quote it exactly. <break time="0.5s"/> When a project closes, the organisation has a new tool. When an AI transformation closes, the organisation has a new decision-maker, and someone accountable for everything it decides. <break time="0.8s"/> Swap organisation for Shop and Save, or for you, and it still holds. So every episode I will give you both versions. The business of one, which is you, and the business of thousands, which is a company I will call Apex, and it will usually turn out that Apex has the same problem with more people in the meeting.
 
 Dave: And eight methods, you said. Eight sounds like a lot for me.
 
-Rabi: Eight sounds like a lot for Apex too. We will take them one at a time over the next seven episodes, and I promise none of them is a form to fill in. But I did not want to start with a list. I wanted to start with you at two in the morning, because that is where most people are right now. They have switched something on and they have not said the thirty seconds.
+Rabi: [warmly] Eight sounds like a lot for Apex too. We will take them one at a time over the next seven episodes, and I promise none of them is a form to fill in. But I did not want to start with a list. I wanted to start with you at two in the morning, because that is where most people are right now. They have switched something on and they have not said the thirty seconds.
 
-Dave: Can I ask you something slightly rude?
+Dave: [hesitant] Can I ask you something slightly rude?
 
 Rabi: Go on.
 
 Dave: Are you running any of this yourself? Or is this one of those things where the expert teaches it and never does it?
 
-Rabi: That is the right question and I would rather answer it straight than tidy. Here is where I actually am today. The episodes, the newsletter, the posts, the course material, all of it is made by me working with an AI model. I plan with it, I draft with it, I argue with it, and every word is read and signed off by me before it goes out. The books were made the same way and it says so on the copyright page. What I do not have is a team of agents doing that work on their own. No marketing agent sending my newsletter. No sales agent answering enquiries. No finance agent preparing my books. Not yet.
+Rabi: [thoughtful] That is the right question and I would rather answer it straight than tidy. Here is where I actually am today. The episodes, the newsletter, the posts, the course material, all of it is made by me working with an AI model. I plan with it, I draft with it, I argue with it, and every word is read and signed off by me before it goes out. The books were made the same way and it says so on the copyright page. <break time="0.6s"/> What I do not have is a team of agents doing that work on their own. No marketing agent sending my newsletter. No sales agent answering enquiries. No finance agent preparing my books. <break time="0.5s"/> Not yet.
 
-Dave: So I am ahead of you. I have one.
+Dave: [amused] So I am ahead of you. I have one.
 
-Rabi: You are ahead of me by eleven emails, yes. And that is what this series is going to fix, in public. Over the next eight weeks I am going to build my own agent team for AEBOK, one agent at a time, and you are going to watch, and so is everyone listening. Marketing first, because it is the lowest risk and I have the most material. Then sales. Then operations. Then finance, which is the one everybody is nervous about, and rightly. And then, only once those four exist and I have seen where they trip over each other, something to coordinate them.
+Rabi: [chuckles] You are ahead of me by eleven emails, yes. And that is what this series is going to fix, in public. Over the next eight weeks I am going to build my own agent team for AEBOK, one agent at a time, and you are going to watch, and so is everyone listening. Marketing first, because it is the lowest risk and I have the most material. Then sales. Then operations. Then finance, which is the one everybody is nervous about, and rightly. And then, only once those four exist and I have seen where they trip over each other, something to coordinate them.
 
 Dave: And before each one goes on?
 
 Rabi: Before each one goes on, I do the thing you skipped last night. I write down, in one line, what that agent may do on its own, what it has to bring to me first, and what it must never touch. You will hear that line. You will hear what the agent gets right in its first week and what it gets wrong, because it will. And you will hear who caught it.
 
-Dave: What if nobody catches it?
+Dave: [quietly] What if nobody catches it?
 
-Rabi: Then that is the episode. Honestly. The thing nobody is teaching right now is the Tuesday morning when the marketing agent has sent four hundred emails with last year's price in them. Who knew it could do that? Who approved it? What record do you look at? If you build the agents without that, and a lot of people are building them without that, you have built a very fast way to make mistakes you cannot explain. And at Apex that is a meeting with legal. At Shop and Save it is you, at two in the morning, writing to eleven sellers.
+Rabi: [serious] Then that is the episode. Honestly. The thing nobody is teaching right now is the Tuesday morning when the marketing agent has sent four hundred emails with last year's price in them. Who knew it could do that? Who approved it? What record do you look at? <break time="0.6s"/> If you build the agents without that, and a lot of people are building them without that, you have built a very fast way to make mistakes you cannot explain. And at Apex that is a meeting with legal. At Shop and Save it is you, at two in the morning, writing to eleven sellers.
 
 Dave: So what is the rule? Give me the one rule.
 
-Rabi: Nothing gets switched on without its line. And when something goes wrong, I show you the record, not the excuse. I will hold myself to that on this feed, and you can hold me to it too.
+Rabi: [firm] Nothing gets switched on without its line. <break time="0.5s"/> And when something goes wrong, I show you the record, not the excuse. I will hold myself to that on this feed, and you can hold me to it too.
 
 Dave: I will. What is next week?
 
-Rabi: Next week is called Capability is not permission. It is about the moment in a demo when the agent does something impressive and nobody in the room asks whether it was allowed to. I think you will recognise it. After that, the commit point, which is the exact moment an agent's output becomes something your business is stuck with. Then who answers when it goes wrong. Then the eight methods in one sitting. Then readiness, which is the one where most people will recognise their own business. Then what record to keep. Then where to start.
+Rabi: Next week is called Capability is not permission. It is about the moment in a demo when the agent does something impressive and nobody in the room asks whether it was allowed to. I think you will recognise it. <break time="0.5s"/> After that, the commit point, which is the exact moment an agent's output becomes something your business is stuck with. Then who answers when it goes wrong. Then the eight methods in one sitting. Then readiness, which is the one where most people will recognise their own business. Then what record to keep. Then where to start.
 
 Dave: And for the people listening who are where I was last night?
 
-Rabi: Two things, both free. The newsletter, where every episode lands as a written issue, if you would rather read. And a short readiness quiz on the site. Ten questions, three minutes. It tells you whether your business is ready to hand real work to an agent, or whether there is an afternoon of writing things down to do first. Links are in the notes.
+Rabi: [warmly] Two things, both free. The newsletter, where every episode lands as a written issue, if you would rather read. And a short readiness quiz on the site. Ten questions, three minutes. It tells you whether your business is ready to hand real work to an agent, or whether there is an afternoon of writing things down to do first. Links are in the notes.
 
 Dave: And my eleven emails?
 
-Rabi: Tonight, before you go to bed, say the thirty seconds to it. Out loud if you like. What it can do on its own. What it checks with you. What it must never touch. Write the three answers down. That is your homework and it is everyone else's too.
+Rabi: [gently] Tonight, before you go to bed, say the thirty seconds to it. Out loud if you like. What it can do on its own. What it checks with you. What it must never touch. Write the three answers down. That is your homework and it is everyone else's too.
 
-Dave: See you next week.
+Dave: [warmly] See you next week.
 
-Rabi: See you next week.
+Rabi: [warmly] See you next week.

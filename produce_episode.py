@@ -22,6 +22,10 @@ Usage:
 Settings come from environment variables or a .env next to this file:
   ELEVENLABS_API_KEY, VOICE_RABI, VOICE_DAVE, SITE_DIR, SITE_URL
   (or TRANSISTOR_API_KEY and TRANSISTOR_SHOW_ID instead of SITE_DIR/SITE_URL)
+Optional, with these defaults:
+  ELEVEN_MODEL=eleven_v4  ELEVEN_STABILITY=0.55  ELEVEN_SIMILARITY=0.87  ELEVEN_CLONE_STRENGTH=0
+  Speaker boost is not a field on the text-to-dialogue endpoint, so it is not sent.
+Audio tags such as [thoughtful] and <break time="0.6s"/> in the script are passed through unchanged.
 And a sidecar JSON next to the script, same name with .json:
   {"title": "...", "description": "...", "number": 1, "publish": true}
 """
@@ -33,6 +37,12 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "out"
 MAX_CHARS = 1800          # ElevenLabs asks for <= 2000 per dialogue request
 MIN_MIN, MAX_MIN = 8, 25  # sanity window for a finished episode
+DEFAULTS = {                # overridable by environment variables of the same name
+    "ELEVEN_MODEL": "eleven_v4",
+    "ELEVEN_STABILITY": "0.55",
+    "ELEVEN_SIMILARITY": "0.87",
+    "ELEVEN_CLONE_STRENGTH": "0",
+}
 
 
 def load_env():
@@ -44,7 +54,10 @@ def load_env():
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
     env.update({k: os.environ[k] for k in os.environ if k in (
-        "ELEVENLABS_API_KEY", "TRANSISTOR_API_KEY", "TRANSISTOR_SHOW_ID", "VOICE_RABI", "VOICE_DAVE", "SITE_DIR", "SITE_URL")})
+        "ELEVENLABS_API_KEY", "TRANSISTOR_API_KEY", "TRANSISTOR_SHOW_ID", "VOICE_RABI", "VOICE_DAVE", "SITE_DIR", "SITE_URL",
+        *DEFAULTS)})
+    for k, v in DEFAULTS.items():
+        env.setdefault(k, v)
     missing = [k for k in ("ELEVENLABS_API_KEY", "VOICE_RABI", "VOICE_DAVE") if k not in env]
     if "TRANSISTOR_API_KEY" not in env and not ("SITE_DIR" in env and "SITE_URL" in env):
         missing.append("either TRANSISTOR_API_KEY+TRANSISTOR_SHOW_ID or SITE_DIR+SITE_URL")
@@ -85,14 +98,21 @@ def chunk(lines):
     return chunks
 
 
-def generate(chunks, key):
+def generate(chunks, env):
     OUT.mkdir(exist_ok=True)
+    key = env["ELEVENLABS_API_KEY"]
+    # Fields per the text-to-dialogue request schema (api.elevenlabs.io/openapi.json):
+    # settings = {stability, similarity, clone_strength}. There is no use_speaker_boost on this endpoint.
+    settings = {"stability": float(env["ELEVEN_STABILITY"]),
+                "similarity": float(env["ELEVEN_SIMILARITY"]),
+                "clone_strength": float(env["ELEVEN_CLONE_STRENGTH"])}
+    print(f"   model {env['ELEVEN_MODEL']}, settings {settings}")
     parts = []
     for i, c in enumerate(chunks, 1):
         r = requests.post(
             "https://api.elevenlabs.io/v1/text-to-dialogue?output_format=mp3_44100_128",
             headers={"xi-api-key": key, "Content-Type": "application/json", "Accept": "audio/mpeg"},
-            json={"inputs": c, "model_id": "eleven_v3"}, timeout=600)
+            json={"inputs": c, "model_id": env["ELEVEN_MODEL"], "settings": settings}, timeout=600)
         if r.status_code != 200:
             stop(f"ElevenLabs refused chunk {i}: {r.status_code} {r.text[:200]}")
         p = OUT / f"part_{i:02d}.mp3"
@@ -244,7 +264,7 @@ def main():
     chunks = chunk(lines)
     print(f"   {len(lines)} lines, {len(chunks)} chunks")
     print("2. Generating dialogue audio")
-    parts = generate(chunks, env["ELEVENLABS_API_KEY"])
+    parts = generate(chunks, env)
     print("3. Stitching and treating")
     final = stitch_and_treat(parts, script.stem)
     if "SITE_DIR" in env:

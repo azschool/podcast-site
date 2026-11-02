@@ -1,5 +1,0 @@
-file '/home/user/podcast-site/out/part_01.mp3'
-file '/home/user/podcast-site/out/part_02.mp3'
-file '/home/user/podcast-site/out/part_03.mp3'
-file '/home/user/podcast-site/out/part_04.mp3'
-file '/home/user/podcast-site/out/part_05.mp3'
