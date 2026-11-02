@@ -4,26 +4,24 @@ Production agent for "Running Your AI Agents: AEBOK Explained".
 
 Reads a two-voice script (lines starting "Rabi:" or "Dave:"), generates one
 dialogue audio file with ElevenLabs, applies the standing audio treatment,
-uploads it to Transistor and publishes it.
+and publishes it to the free GitHub Pages feed (or Transistor if configured).
 
 LIMIT LINE (read before switching it on)
-  Does alone:      generate audio, treat audio, upload file, create and publish
-                   the episode named in the sidecar JSON.
+  Does alone:      generate audio, treat audio, write the feed, push the
+                   episode named in the sidecar JSON.
   Checks with you: nothing in the normal path. If the script has no sidecar, if
                    a line has no speaker label, if the audio is under 8 minutes
                    or over 25, or if any API call fails, it STOPS and prints why.
                    It never guesses a title, a description or a speaker.
   Never touches:   show settings, other episodes, the voice library, the
-                   newsletter, social posts, or any file outside ./out.
+                   newsletter, social posts, or any file outside ./out and
+                   the site folder's episodes/ and feed.xml.
 
 Usage:
   python produce_episode.py path/to/Ep01_Studio_Script.txt
-Needs, next to this file, a .env with:
-  ELEVENLABS_API_KEY=...
-  TRANSISTOR_API_KEY=...
-  TRANSISTOR_SHOW_ID=...
-  VOICE_RABI=GifidYwohEPTNZsTeDLD
-  VOICE_DAVE=A1fsqMcxAgM5FTRQc4fb
+Settings come from environment variables or a .env next to this file:
+  ELEVENLABS_API_KEY, VOICE_RABI, VOICE_DAVE, SITE_DIR, SITE_URL
+  (or TRANSISTOR_API_KEY and TRANSISTOR_SHOW_ID instead of SITE_DIR/SITE_URL)
 And a sidecar JSON next to the script, same name with .json:
   {"title": "...", "description": "...", "number": 1, "publish": true}
 """
@@ -46,10 +44,12 @@ def load_env():
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip()
     env.update({k: os.environ[k] for k in os.environ if k in (
-        "ELEVENLABS_API_KEY", "TRANSISTOR_API_KEY", "TRANSISTOR_SHOW_ID", "VOICE_RABI", "VOICE_DAVE")})
-    missing = [k for k in ("ELEVENLABS_API_KEY", "TRANSISTOR_API_KEY", "TRANSISTOR_SHOW_ID", "VOICE_RABI", "VOICE_DAVE") if k not in env]
+        "ELEVENLABS_API_KEY", "TRANSISTOR_API_KEY", "TRANSISTOR_SHOW_ID", "VOICE_RABI", "VOICE_DAVE", "SITE_DIR", "SITE_URL")})
+    missing = [k for k in ("ELEVENLABS_API_KEY", "VOICE_RABI", "VOICE_DAVE") if k not in env]
+    if "TRANSISTOR_API_KEY" not in env and not ("SITE_DIR" in env and "SITE_URL" in env):
+        missing.append("either TRANSISTOR_API_KEY+TRANSISTOR_SHOW_ID or SITE_DIR+SITE_URL")
     if missing:
-        stop(f"Missing settings in .env: {', '.join(missing)}")
+        stop(f"Missing settings: {', '.join(missing)}")
     return env
 
 
@@ -160,6 +160,70 @@ def upload_and_publish(final, meta, env):
     return ep_id
 
 
+SHOW = {
+    "title": "Running Your AI Agents: AEBOK Explained",
+    "link": "https://autonomousenterpriseai.com",
+    "author": "Rabi Jay",
+    "email": "",
+    "description": ("AI agents can now answer your customers, post for you, chase invoices and prepare your books. "
+                    "The question is not whether they can do the work. It is what they are allowed to do, who approves it, "
+                    "and who answers when it goes wrong. Rabi Jay, author of three books on enterprise AI and founder of AEBOK, "
+                    "the Autonomous Enterprise Body of Knowledge, works through it with Dave, who runs a small online marketplace "
+                    "and is switching on his agents one at a time. Dave is invented. The agents and the mistakes are real."),
+    "image": "cover.jpg",
+    "category": "Business",
+}
+
+
+def publish_github_pages(final, meta, env):
+    """Free hosting: copy the MP3 into the site folder, rebuild feed.xml, git push. GitHub Pages serves both."""
+    import shutil, html
+    from email.utils import formatdate
+    site = Path(env["SITE_DIR"]).expanduser()
+    base = env["SITE_URL"].rstrip("/")
+    (site / "episodes").mkdir(parents=True, exist_ok=True)
+    dest = site / "episodes" / final.name
+    shutil.copy(final, dest)
+    size = dest.stat().st_size
+    dur = int(float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                                             "-of", "default=nw=1:nk=1", str(dest)]).decode().strip()))
+    idx = site / "episodes.json"
+    items = json.loads(idx.read_text()) if idx.exists() else []
+    items = [i for i in items if i["file"] != final.name]
+    items.append({"file": final.name, "title": meta["title"], "description": meta["description"],
+                  "number": meta.get("number"), "size": size, "duration": dur, "date": formatdate(localtime=True)})
+    items.sort(key=lambda i: i.get("number") or 0)
+    idx.write_text(json.dumps(items, indent=2))
+    e = html.escape
+    rss = ['<?xml version="1.0" encoding="UTF-8"?>',
+           '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">',
+           '<channel>',
+           f'<title>{e(SHOW["title"])}</title>', f'<link>{SHOW["link"]}</link>', '<language>en-us</language>',
+           f'<description>{e(SHOW["description"])}</description>', f'<itunes:author>{e(SHOW["author"])}</itunes:author>',
+           f'<itunes:summary>{e(SHOW["description"])}</itunes:summary>', '<itunes:explicit>false</itunes:explicit>',
+           f'<itunes:category text="{SHOW["category"]}"/>', f'<itunes:image href="{base}/{SHOW["image"]}"/>',
+           f'<atom:link href="{base}/feed.xml" rel="self" type="application/rss+xml"/>']
+    if SHOW["email"]:
+        rss.append(f'<itunes:owner><itunes:name>{e(SHOW["author"])}</itunes:name><itunes:email>{SHOW["email"]}</itunes:email></itunes:owner>')
+    for i in reversed(items):
+        url = f'{base}/episodes/{i["file"]}'
+        rss += ['<item>', f'<title>{e(i["title"])}</title>', f'<description>{e(i["description"])}</description>',
+                f'<enclosure url="{url}" length="{i["size"]}" type="audio/mpeg"/>', f'<guid isPermaLink="false">{url}</guid>',
+                f'<pubDate>{i["date"]}</pubDate>', f'<itunes:duration>{i["duration"]}</itunes:duration>',
+                f'<itunes:episode>{i["number"]}</itunes:episode>' if i.get("number") else '', '<itunes:explicit>false</itunes:explicit>', '</item>']
+    rss += ['</channel>', '</rss>']
+    (site / "feed.xml").write_text("\n".join(x for x in rss if x), encoding="utf-8")
+    if meta.get("publish", False):
+        for cmd in (["git", "-C", str(site), "add", "-A"],
+                    ["git", "-C", str(site), "commit", "-m", f"Episode: {meta['title']}"],
+                    ["git", "-C", str(site), "push"]):
+            run(cmd)
+        print(f"  pushed. Feed: {base}/feed.xml")
+    else:
+        print(f"  feed and file written to {site}, not pushed (publish=false in sidecar)")
+    return final.name
+
+
 def main():
     if len(sys.argv) != 2:
         stop("Usage: python produce_episode.py path/to/script.txt")
@@ -183,8 +247,12 @@ def main():
     parts = generate(chunks, env["ELEVENLABS_API_KEY"])
     print("3. Stitching and treating")
     final = stitch_and_treat(parts, script.stem)
-    print("4. Uploading to Transistor")
-    ep_id = upload_and_publish(final, meta, env)
+    if "SITE_DIR" in env:
+        print("4. Publishing to the free feed (GitHub Pages)")
+        ep_id = publish_github_pages(final, meta, env)
+    else:
+        print("4. Uploading to Transistor")
+        ep_id = upload_and_publish(final, meta, env)
     log = OUT / "log.txt"
     with open(log, "a") as f:
         f.write(f"{time.strftime('%Y-%m-%d %H:%M')} {script.name} -> episode {ep_id} ({'published' if meta.get('publish') else 'draft'})\n")
