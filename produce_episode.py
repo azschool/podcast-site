@@ -19,6 +19,9 @@ LIMIT LINE (read before switching it on)
 
 Usage:
   python produce_episode.py path/to/Ep01_Studio_Script.txt
+  python produce_episode.py --retreat path/to/Ep01_Studio_Script.txt
+    (re-run only the audio treatment on out/<stem>_raw.mp3 and copy the result into
+     SITE_DIR/episodes/; no ElevenLabs call, no feed or index change)
 Settings come from environment variables or a .env next to this file:
   ELEVENLABS_API_KEY, VOICE_RABI, VOICE_DAVE, SITE_DIR, SITE_URL
   (or TRANSISTOR_API_KEY and TRANSISTOR_SHOW_ID instead of SITE_DIR/SITE_URL)
@@ -126,14 +129,68 @@ def stitch_and_treat(parts, stem):
     lst = OUT / "parts.txt"
     lst.write_text("".join(f"file '{p.as_posix()}'\n" for p in parts))
     raw = OUT / f"{stem}_raw.mp3"
-    final = OUT / f"{stem}.mp3"
     run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(raw)])
-    # Standing audio treatment: trim head/tail silence, warmth shelf +3.5 dB at 140 Hz,
-    # loudness -16 LUFS, true peak -1.5. No internal pause editing.
-    af = ("silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.3,"
-          "areverse,silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.3,areverse,"
-          "bass=g=3.5:f=140:w=0.5,loudnorm=I=-16:TP=-1.5:LRA=11")
-    run(["ffmpeg", "-y", "-i", str(raw), "-af", af, "-codec:a", "libmp3lame", "-b:a", "128k", str(final)])
+    return treat(raw, stem)
+
+
+# Standing audio treatment: trim head/tail silence, warmth shelf +3.5 dB at 140 Hz,
+# then level the episode to -14 LUFS integrated with a true-peak ceiling of -1.0 dBTP.
+# No internal pause editing.
+PRE_LOUDNORM = ("silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.3,"
+                "areverse,silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.3,areverse,"
+                "bass=g=3.5:f=140:w=0.5")
+TARGET_I, TARGET_TP, TARGET_LRA = -14.0, -1.0, 11
+TOLERANCE_LU = 0.1        # how close the delivered MP3 must read to TARGET_I
+MAX_PASSES = 5
+
+
+def measure(path, prefilter=""):
+    """Measure integrated loudness, true peak and LRA with loudnorm's analysis pass (EBU R128)."""
+    af = (prefilter + "," if prefilter else "") + f"loudnorm=I={TARGET_I}:TP={TARGET_TP}:LRA={TARGET_LRA}:print_format=json"
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-af", af, "-f", "null", "-"],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        stop(f"ffmpeg loudness measurement failed: {r.stderr[-400:]}")
+    try:
+        js = json.loads(r.stderr[r.stderr.rindex("{"):r.stderr.rindex("}") + 1])
+        return float(js["input_i"]), float(js["input_tp"]), float(js["input_lra"])
+    except (ValueError, KeyError):
+        stop(f"Could not read loudness measurement: {r.stderr[-400:]}")
+
+
+def treat(raw, stem):
+    """Two-pass levelling. Pass 1 measures the treated signal. Pass 2 applies the measured gain
+    as a constant (linear) gain into an oversampled true-peak limiter, then encodes the MP3.
+    The delivered MP3 is measured again and the gain corrected if it is off target, because
+    loudnorm's one-pass dynamic mode and the 128k MP3 encode each shave a few tenths of a LU.
+    loudnorm's own linear mode cannot be used here: the raw ElevenLabs audio already peaks near
+    0 dBTP, so the gain needed to reach -14 LUFS would breach -1.0 dBTP without a limiter."""
+    final = OUT / f"{stem}.mp3"
+    i0, tp0, lra0 = measure(raw, PRE_LOUDNORM)
+    print(f"  measured: I {i0:.2f} LUFS, TP {tp0:.2f} dBTP, LRA {lra0:.1f}")
+    gain, ceiling, history = TARGET_I - i0, TARGET_TP, []
+    for n in range(1, MAX_PASSES + 1):
+        af = (f"{PRE_LOUDNORM},volume={gain:.2f}dB,aresample=192000,"
+              f"alimiter=limit={ceiling:.2f}dB:attack=5:release=100:level=false,aresample=44100")
+        run(["ffmpeg", "-y", "-i", str(raw), "-af", af, "-codec:a", "libmp3lame", "-b:a", "128k", str(final)])
+        i, tp, lra = measure(final)
+        print(f"  pass {n}: gain {gain:+.2f} dB, ceiling {ceiling:.2f} dBTP -> MP3 reads I {i:.2f} LUFS, TP {tp:.2f} dBTP, LRA {lra:.1f}")
+        if abs(i - TARGET_I) <= TOLERANCE_LU and tp <= TARGET_TP + 0.05:
+            break
+        # The limiter absorbs part of each extra dB, so each dB of gain yields less than 1 LU.
+        # Use the slope seen between the last two passes to size the correction.
+        history.append((gain, i))
+        slope = 1.0
+        if len(history) >= 2:
+            (g1, i1), (g2, i2) = history[-2], history[-1]
+            if abs(g2 - g1) > 1e-6:
+                slope = min(1.0, max(0.3, (i2 - i1) / (g2 - g1)))
+        gain += (TARGET_I - i) / slope
+        if tp > TARGET_TP + 0.05:
+            ceiling -= tp - TARGET_TP
+    else:
+        stop(f"Level did not settle within {TOLERANCE_LU} LU of {TARGET_I} LUFS in {MAX_PASSES} passes "
+             f"(last reading {i:.2f} LUFS, {tp:.2f} dBTP). Listen to {final} before anything is uploaded.")
     dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration",
                                          "-of", "default=nw=1:nk=1", str(final)]).decode().strip())
     minutes = dur / 60
@@ -244,9 +301,28 @@ def publish_github_pages(final, meta, env):
     return final.name
 
 
+def retreat(script):
+    """Re-run only the treatment on an existing raw stitch. Touches out/ and the episode MP3, nothing else."""
+    import shutil
+    raw = OUT / f"{script.stem}_raw.mp3"
+    if not raw.exists():
+        stop(f"No raw audio at {raw}. Run the full pipeline first.")
+    env = load_env()
+    print("Re-treating existing raw audio")
+    final = treat(raw, script.stem)
+    if "SITE_DIR" in env:
+        dest = Path(env["SITE_DIR"]).expanduser() / "episodes" / final.name
+        shutil.copy(final, dest)
+        print(f"  copied to {dest}. feed.xml and episodes.json not changed.")
+    with open(OUT / "log.txt", "a") as f:
+        f.write(f"{time.strftime('%Y-%m-%d %H:%M')} {script.name} -> re-treated {final.name}\n")
+
+
 def main():
+    if len(sys.argv) == 3 and sys.argv[1] == "--retreat":
+        return retreat(Path(sys.argv[2]))
     if len(sys.argv) != 2:
-        stop("Usage: python produce_episode.py path/to/script.txt")
+        stop("Usage: python produce_episode.py [--retreat] path/to/script.txt")
     script = Path(sys.argv[1])
     sidecar = script.with_suffix(".json")
     if not script.exists():
