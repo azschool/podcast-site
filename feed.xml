@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-<title>Running Your AI Agents: AEBOK Explained</title>
+<title>Running Your AI Agents: AEBOK™ Explained</title>
 <link>https://autonomousenterpriseai.com</link>
 <language>en-us</language>
-<description>AI agents can now answer your customers, post for you, chase invoices and prepare your books. The question is not whether they can do the work. It is what they are allowed to do, who approves it, and who answers when it goes wrong. Rabi Jay, author of three books on enterprise AI and founder of AEBOK, the Autonomous Enterprise Body of Knowledge, works through it with Dave, who runs a small online marketplace and is switching on his agents one at a time. Dave is invented. The agents and the mistakes are real.</description>
+<description>AI agents can now answer your customers, post for you, chase invoices and prepare your books. The question is not whether they can do the work. It is what they are allowed to do, who approves it, and who answers when it goes wrong. Rabi Jay, author of three books on enterprise AI and founder of AEBOK, the Autonomous Enterprise Body of Knowledge, works through it with Dave, who runs a small online marketplace and is switching on his agents one at a time. Dave is invented. The agents and the mistakes are real. Part of the AEBOK™ series from the Autonomous Enterprise Institute.</description>
 <itunes:author>Rabi Jay</itunes:author>
-<itunes:summary>AI agents can now answer your customers, post for you, chase invoices and prepare your books. The question is not whether they can do the work. It is what they are allowed to do, who approves it, and who answers when it goes wrong. Rabi Jay, author of three books on enterprise AI and founder of AEBOK, the Autonomous Enterprise Body of Knowledge, works through it with Dave, who runs a small online marketplace and is switching on his agents one at a time. Dave is invented. The agents and the mistakes are real.</itunes:summary>
+<itunes:summary>AI agents can now answer your customers, post for you, chase invoices and prepare your books. The question is not whether they can do the work. It is what they are allowed to do, who approves it, and who answers when it goes wrong. Rabi Jay, author of three books on enterprise AI and founder of AEBOK, the Autonomous Enterprise Body of Knowledge, works through it with Dave, who runs a small online marketplace and is switching on his agents one at a time. Dave is invented. The agents and the mistakes are real. Part of the AEBOK™ series from the Autonomous Enterprise Institute.</itunes:summary>
 <itunes:explicit>false</itunes:explicit>
 <itunes:category text="Business"/>
 <itunes:image href="https://azschool.github.io/podcast-site/cover.jpg"/>
@@ -19,7 +19,9 @@
 Readiness quiz: https://autonomousenterpriseai.com/readiness-quiz
 Owners&#x27; group: https://chat.whatsapp.com/HeLeFUhqdbYKYxou4n723i
 
-Planned and drafted with Anthropic Claude, extensively edited. Rabi&#x27;s voice is his authorised synthetic voice. Dave is an invented character voiced by AI. Shop and Save is a fictional business.</description>
+Planned and drafted with Anthropic Claude, extensively edited. Rabi&#x27;s voice is his authorised synthetic voice. Dave is an invented character voiced by AI. Shop and Save is a fictional business.
+
+Part of the AEBOK™ series from the Autonomous Enterprise Institute.</description>
 <enclosure url="https://azschool.github.io/podcast-site/episodes/Ep01_Studio_Script.mp3" length="7908141" type="audio/mpeg"/>
 <guid isPermaLink="false">https://azschool.github.io/podcast-site/episodes/Ep01_Studio_Script.mp3</guid>
 <pubDate>Mon, 02 Nov 2026 05:05:14 +0000</pubDate>

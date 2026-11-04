@@ -238,7 +238,7 @@ def upload_and_publish(final, meta, env):
 
 
 SHOW = {
-    "title": "Running Your AI Agents: AEBOK Explained",
+    "title": "Running Your AI Agents: AEBOK™ Explained",
     "link": "https://autonomousenterpriseai.com",
     "author": "Rabi Jay",
     "email": "rabijay1@yahoo.com",
@@ -246,15 +246,17 @@ SHOW = {
                     "The question is not whether they can do the work. It is what they are allowed to do, who approves it, "
                     "and who answers when it goes wrong. Rabi Jay, author of three books on enterprise AI and founder of AEBOK, "
                     "the Autonomous Enterprise Body of Knowledge, works through it with Dave, who runs a small online marketplace "
-                    "and is switching on his agents one at a time. Dave is invented. The agents and the mistakes are real."),
+                    "and is switching on his agents one at a time. Dave is invented. The agents and the mistakes are real. "
+                    "Part of the AEBOK™ series from the Autonomous Enterprise Institute."),
     "image": "cover.jpg",
     "category": "Business",
 }
+SERIES_LINE = "Part of the AEBOK™ series from the Autonomous Enterprise Institute."  # appended to every episode description in the feed
 
 
 def publish_github_pages(final, meta, env):
     """Free hosting: copy the MP3 into the site folder, rebuild feed.xml, git push. GitHub Pages serves both."""
-    import shutil, html
+    import shutil
     from email.utils import formatdate
     site = Path(env["SITE_DIR"]).expanduser()
     base = env["SITE_URL"].rstrip("/")
@@ -271,6 +273,21 @@ def publish_github_pages(final, meta, env):
                   "number": meta.get("number"), "size": size, "duration": dur, "date": formatdate(localtime=True)})
     items.sort(key=lambda i: i.get("number") or 0)
     idx.write_text(json.dumps(items, indent=2))
+    write_feed(site, base, items)
+    if meta.get("publish", False):
+        for cmd in (["git", "-C", str(site), "add", "-A"],
+                    ["git", "-C", str(site), "commit", "-m", f"Episode: {meta['title']}"],
+                    ["git", "-C", str(site), "push"]):
+            run(cmd)
+        print(f"  pushed. Feed: {base}/feed.xml")
+    else:
+        print(f"  feed and file written to {site}, not pushed (publish=false in sidecar)")
+    return final.name
+
+
+def write_feed(site, base, items):
+    """Rebuild feed.xml in the site folder from the episodes list (episodes.json)."""
+    import html
     e = html.escape
     rss = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">',
@@ -284,21 +301,13 @@ def publish_github_pages(final, meta, env):
         rss.append(f'<itunes:owner><itunes:name>{e(SHOW["author"])}</itunes:name><itunes:email>{SHOW["email"]}</itunes:email></itunes:owner>')
     for i in reversed(items):
         url = f'{base}/episodes/{i["file"]}'
-        rss += ['<item>', f'<title>{e(i["title"])}</title>', f'<description>{e(i["description"])}</description>',
+        desc = i["description"].rstrip() + "\n\n" + SERIES_LINE
+        rss += ['<item>', f'<title>{e(i["title"])}</title>', f'<description>{e(desc)}</description>',
                 f'<enclosure url="{url}" length="{i["size"]}" type="audio/mpeg"/>', f'<guid isPermaLink="false">{url}</guid>',
                 f'<pubDate>{i["date"]}</pubDate>', f'<itunes:duration>{i["duration"]}</itunes:duration>',
                 f'<itunes:episode>{i["number"]}</itunes:episode>' if i.get("number") else '', '<itunes:explicit>false</itunes:explicit>', '</item>']
     rss += ['</channel>', '</rss>']
     (site / "feed.xml").write_text("\n".join(x for x in rss if x), encoding="utf-8")
-    if meta.get("publish", False):
-        for cmd in (["git", "-C", str(site), "add", "-A"],
-                    ["git", "-C", str(site), "commit", "-m", f"Episode: {meta['title']}"],
-                    ["git", "-C", str(site), "push"]):
-            run(cmd)
-        print(f"  pushed. Feed: {base}/feed.xml")
-    else:
-        print(f"  feed and file written to {site}, not pushed (publish=false in sidecar)")
-    return final.name
 
 
 def retreat(script):
